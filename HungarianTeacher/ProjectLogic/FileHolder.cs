@@ -2,7 +2,7 @@
 {
     Random random = new Random(); // Random
 
-    private string _filePath = @""; // Folder with pictures
+    private string _filePath = Path.Combine(AppContext.BaseDirectory, "Assets"); // Get path to the folder with pictures
     public string filePath 
     {
         get
