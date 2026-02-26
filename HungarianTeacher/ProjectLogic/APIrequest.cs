@@ -4,7 +4,7 @@ using Serilog;
 
 class APIrequest // This class is responsiable for working with API
 {
-    private string _apiKey = "AIzaSyDHso9ATf4lg3U4Li0ROprvfAfZvtdw_Pw"; // Key to work with API
+    private string _apiKey = "Your key"; // Key to work with API
     public string apiKey
     {
         get

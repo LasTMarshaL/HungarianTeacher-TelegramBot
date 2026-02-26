@@ -9,7 +9,7 @@ using Telegram.Bot.Types.ReplyMarkups;
 
 class TelegramBotLogic // This class is responsiable for logic
 {
-    private static TelegramBotHost hungarianStudingBot = new TelegramBotHost("8312704065:AAGWs8Yz4Sz8o3VR1AqwC7hlkU4MtOuh2NI"); // Create instance with token
+    private static TelegramBotHost hungarianStudingBot = new TelegramBotHost("Your token"); // Create instance with token
 
     
     private static  List<long> allChatIDs = new List<long>(); // Thsi list is used to check if user's Teelegram chat ID is already added to database
