@@ -5,93 +5,105 @@ namespace HungarianTeacher.ProjectLogic
 
 
 {
-    public class BotMessageScheduler // This class is responsiable for working with logic of time between messages and target time
+    public class BotMessageScheduler // This class is responsiable for working with logic of time between messages and target time.
     {
-        private readonly IDatabase _database; // Database instance
+        private readonly IDatabase _database;
 
-        public BotMessageScheduler(IDatabase database) // Constructor of this class, which takes the database instance as a parameter
+        public BotMessageScheduler(IDatabase database) 
         {
-            _database = database; // Assign the database instance to the private field
+            _database = database;
         }
 
-        public async Task<bool> SetTimeBetweenMessageAndTargetTimeLogic(long chatID, string minutesUsersMessage) // Set time between messages in the database
+        /// <summary>
+        /// Sets the interval, in minutes, between messages for a specified chat if the provided value is a valid, non-zero integer.
+        /// </summary>
+        public async Task<bool> SetTimeBetweenMessageAndTargetTimeLogic(long chatID, string minutesUsersMessage) 
         {
-            if (int.TryParse(minutesUsersMessage, out int minutes)) // Try to convert user's message to int
+            if (int.TryParse(minutesUsersMessage, out int minutes)) 
             {
-                if (minutes != 0) // If minutes is more than 0
+                if (minutes != 0)
                 {
-                    minutes = Math.Abs(minutes); // Take absolute value of minutes, because time between messages can't be negative
-                    await _database.SetTimeBetweenMessageAndTargetTime(chatID.ToString(), minutes, DateTime.UtcNow.AddMinutes(minutes).ToUniversalTime().ToString("o")); // Set time between sending messages
+                    minutes = Math.Abs(minutes);
+                    await _database.SetTimeBetweenMessageAndTargetTime(chatID.ToString(), minutes, DateTime.UtcNow.AddMinutes(minutes).ToUniversalTime().ToString("o"));
                 
-                    Log.Information("Time between messages was set to {Minutes} minutes for {ChatID}", minutes, chatID); // Log information about setting time between messages
+                    Log.Information("Time between messages was set to {Minutes} minutes for {ChatID}", minutes, chatID);
 
-                    return true; // Return true if conversion was successful
+                    return true; 
                 }
                 else
                 {
-                    return false; // Return true if conversion was failed
+                    return false; 
                 }
             }
             else
             {
-                return false; // Return false if conversion was failed 
+                return false; 
             }
         }
 
-        public async Task<int> GetTimeBetweenMessagesLogic(long chatID) // Get time between messages from the database
+        /// <summary>
+        /// Retrieves the time interval, in seconds, between messages for the specified chat.
+        /// </summary>
+        public async Task<int> GetTimeBetweenMessagesLogic(long chatID) 
         {
             try
             {
-                int timeBetweenMessages = await _database.GetTimeBetweenMessages(chatID.ToString()); // Get time between messages from the database
-                if (timeBetweenMessages > 0) // If time between messages is more than 0
+                int timeBetweenMessages = await _database.GetTimeBetweenMessages(chatID.ToString()); 
+                if (timeBetweenMessages > 0) 
                 {
-                    return timeBetweenMessages;  // Return time between messages
+                    return timeBetweenMessages;  
                 }
-                return 30; // Return default value if getting time between messages failed
+                return 30; 
             }
             catch
             {
-                return 30; // Return default value if getting time between messages failed
+                return 30; 
             }
         }
 
-        public async Task<bool> SetTargetTimeLogic(long chatID, int minutes) // Set target time in the database
+        /// <summary>
+        /// Sets the target time for a chat based on the specified duration in minutes.
+        /// </summary>
+        public async Task<bool> SetTargetTimeLogic(long chatID, int minutes)
         {
-            if (minutes > 0) // If minutes is more then 0
+            if (minutes > 0)
             {
-                await _database.SetTargetTime(chatID.ToString(), DateTime.UtcNow.AddMinutes(minutes).ToUniversalTime().ToString("o")); // Set target time in the database // o - international time format
+                await _database.SetTargetTime(chatID.ToString(), DateTime.UtcNow.AddMinutes(minutes).ToUniversalTime().ToString("o")); 
                 
-                return true; // Return true if setting target time was successful
+                return true; 
             }
             else
             {
-                await _database.SetTargetTime(chatID.ToString(), DateTime.UtcNow.AddMinutes(30).ToUniversalTime().ToString("o")); // Set target time in the database with defoult value // o - international time format
+                await _database.SetTargetTime(chatID.ToString(), DateTime.UtcNow.AddMinutes(30).ToUniversalTime().ToString("o"));
 
-                Log.Warning($"Warning Failed to set suggested interval for {chatID}, 30-minutes interval was set!"); // Log warning if setting target time was failed
+                Log.Warning($"Warning Failed to set suggested interval for {chatID}, 30-minutes interval was set!"); 
 
-                return false; // Return false if setting target time was failed
+                return false; 
             }
         }
 
-        public async Task<DateTime> GetTargetTimeLogic(long chatID) // Get target time from the database
+        /// <summary>
+        /// Retrieves the scheduled target time for the specified chat. If the stored target time is invalid or in the past, calculates a new target time based on the current UTC time and a predefined delay.
+        /// </summary>
+        public async Task<DateTime> GetTargetTimeLogic(long chatID) 
         {
-            string targetTimeString = await _database.GetTargetTime(chatID.ToString()); // Get target time from the database
-            if (DateTime.TryParse(targetTimeString, null, System.Globalization.DateTimeStyles.AdjustToUniversal, out DateTime targetTime)) // Try to convert target time to DateTime
+            string targetTimeString = await _database.GetTargetTime(chatID.ToString()); 
+            if (DateTime.TryParse(targetTimeString, null, System.Globalization.DateTimeStyles.AdjustToUniversal, out DateTime targetTime)) 
             {
-                if (targetTime >= DateTime.UtcNow) // If target time is more then or equal to current time
+                if (targetTime >= DateTime.UtcNow) 
                 {
-                    return targetTime; // Return target time if conversion was successful
+                    return targetTime; 
                 }
                 else
                 {
-                   Log.Warning($"Failed to get traget time from the database for {chatID}, new target time = now + 30 minutes!"); // Print warning if target time from the database is less then current time
-                    return DateTime.UtcNow.AddMinutes(await GetTimeBetweenMessagesLogic(chatID)); // Return default value of current time with added minutes if conversion was failed 
+                   Log.Warning($"Failed to get traget time from the database for {chatID}, new target time = now + 30 minutes!"); 
+                    return DateTime.UtcNow.AddMinutes(await GetTimeBetweenMessagesLogic(chatID));
                 }  
             }
             else
             {
-                Log.Warning($"Failed to get traget time from the database for {chatID}, new target time = now + 30 minutes!"); // Print warning if conversion of target time from the database was failed
-                return DateTime.UtcNow.AddMinutes(await GetTimeBetweenMessagesLogic(chatID)); // Return default value of current time with added minutes if conversion was failed
+                Log.Warning($"Failed to get traget time from the database for {chatID}, new target time = now + 30 minutes!"); 
+                return DateTime.UtcNow.AddMinutes(await GetTimeBetweenMessagesLogic(chatID)); 
             }
         }
     }

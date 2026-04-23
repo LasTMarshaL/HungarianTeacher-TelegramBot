@@ -2,33 +2,31 @@
 using Microsoft.Data.Sqlite;
 
 
-public class Database: IDatabase // This class is responsiable for working with database
+public class Database: IDatabase // This class is responsiable for working with database.
 {
-    public async Task<string> GetDatabasePath() // Get path to the database
+    public async Task<string> GetDatabasePath() 
     { 
-        // Environment gives access to special folders in the system
-        // LocalApplicationData - folder for application data for current user
         var folder = Environment.SpecialFolder.LocalApplicationData;
 
-        // Get path to the folder for application data for current user and add name of the database file to it
         var path = Environment.GetFolderPath(folder);
 
-        // Join path to the folder and name of the database file to get full path to the database
         var databasePath = System.IO.Path.Join(path, "TelegramBotDatabase.db");
 
-        return databasePath; // Return path to the database
+        return databasePath;
     }
 
-    public async Task CreateDatabaseTable() // Create database if it doesn't exist
+    /// <summary>
+    /// Creates the Users table in the SQLite database if it does not already exist.
+    /// </summary>
+    public async Task CreateDatabaseTable() 
     {
-        string databasePath = await GetDatabasePath(); // Get path to the database
+        string databasePath = await GetDatabasePath(); 
 
-        using var connection = new SqliteConnection($"Data Source={databasePath}"); // Connect to the database
-        await connection.OpenAsync(); // Open connection
+        using var connection = new SqliteConnection($"Data Source={databasePath}");
+        await connection.OpenAsync();
 
-        var command = connection.CreateCommand(); // Create command
+        var command = connection.CreateCommand(); 
 
-        // SQLite3 doesn't support boolean data type, so we use INTEGER with values 0 and 1 to represent false and true respectively
         command.CommandText = @"
             CREATE TABLE IF NOT EXISTS Users (
                 ChatID TEXT PRIMARY KEY,
@@ -37,234 +35,264 @@ public class Database: IDatabase // This class is responsiable for working with 
                 Minutes INTEGER DEFAULT 30,
                 TargetTime TEXT
             );
-        "; // SQL-request to create table for users' Telegram chat IDs and their settings
+        ";
 
-        await command.ExecuteNonQueryAsync(); // Execute SQL-request without any feedback
+        await command.ExecuteNonQueryAsync();
     }
-    public async Task AddNewChatID(string chatID) // Add new Telegram chat id 
+
+    /// <summary>
+    /// Inserts a new chat identifier into the Users table if it does not already exist.
+    /// </summary>
+    public async Task AddNewChatID(string chatID) 
     {
-        string databasePath = await GetDatabasePath(); // Get path to the database 
+        string databasePath = await GetDatabasePath();
 
-        using var connection = new SqliteConnection($"Data Source={databasePath}"); // Connect to the database
-        await connection.OpenAsync(); // Open connection
+        using var connection = new SqliteConnection($"Data Source={databasePath}"); 
+        await connection.OpenAsync();
 
-        var command = connection.CreateCommand(); // Create command
+        var command = connection.CreateCommand(); 
         command.CommandText = @"
                     INSERT OR IGNORE INTO Users (ChatID)
                     VALUES ($chatID);
-                    "; // SQL-request to add new user's Telegram chat ID
+                    "; 
 
-        command.Parameters.AddWithValue("$chatID", chatID); // Bind the value of the category to the parameter of the SQL-request
+        command.Parameters.AddWithValue("$chatID", chatID);
 
-        await command.ExecuteNonQueryAsync(); // Execute SQL-request without any feedback
+        await command.ExecuteNonQueryAsync(); 
     }
 
-    public async Task<List<string>> GetAllChatIDs() // Get all users' Telegram chat IDs
+    /// <summary>
+    /// Asynchronously retrieves all chat ID values from the Users table in the database.
+    /// </summary>
+    public async Task<List<string>> GetAllChatIDs() 
     {
-        string databasePath = await GetDatabasePath(); // Get path to the database
+        string databasePath = await GetDatabasePath();
 
-        List<string> chatIDs = new List<string>(); // Create list for users' Telegram chat IDs
+        List<string> chatIDs = new List<string>();
 
-        using var connection = new SqliteConnection($"Data Source={databasePath}");// Connect to the database
-        await connection.OpenAsync(); // Open connection
+        using var connection = new SqliteConnection($"Data Source={databasePath}");
+        await connection.OpenAsync();
 
-        var command = connection.CreateCommand(); // Create command
+        var command = connection.CreateCommand();
         command.CommandText = @"
                               SELECT ChatID FROM Users
-                              ;"; // SQL-request to get all chat IDs
+                              ;"; 
 
-        using var reader = await command.ExecuteReaderAsync(); // Create SQL-request to the database to get data
+        using var reader = await command.ExecuteReaderAsync(); 
         while (reader.Read())
         {
-            chatIDs.Add(reader.GetString(0)); // Add chat ID to the list
+            chatIDs.Add(reader.GetString(0));
         }
 
-        return chatIDs; // Return list with all users' Telegram chat IDs
+        return chatIDs;
     }
 
-    public async Task SetIsWaitingForLanguageMessage(string chatID, bool isWaitingForLanguageMessage) // Set value to check if Telegram bot is waitng for user's message to select language
+    /// <summary>
+    /// Asynchronously updates the user's waiting status for a language message in the database for the specified chat ID.
+    /// </summary>
+    public async Task SetIsWaitingForLanguageMessage(string chatID, bool isWaitingForLanguageMessage) 
     {
-        string databasePath = await GetDatabasePath(); // Get path to the database
+        string databasePath = await GetDatabasePath();
 
-        using var connection = new SqliteConnection($"Data Source={databasePath}"); // Connect to the database
-        await connection.OpenAsync(); // Open connection
+        using var connection = new SqliteConnection($"Data Source={databasePath}");
+        await connection.OpenAsync();
 
-        var command = connection.CreateCommand(); // Create command
+        var command = connection.CreateCommand(); 
         command.CommandText = @"
             UPDATE Users
             SET IsWaitingForLanguageMessage = $isWaitingForLanguageMessage
             WHERE ChatID = $chatID;
-            "; // SQL-request to get if Telegram bot is waitng for user's message to select language 
+            "; 
 
-        command.Parameters.AddWithValue("$chatID", chatID); // Bind the value of the category to the parameter of the SQL-request
-        command.Parameters.AddWithValue("$isWaitingForLanguageMessage", isWaitingForLanguageMessage); // Bind the value of the category to the parameter of the SQL-request
+        command.Parameters.AddWithValue("$chatID", chatID);
+        command.Parameters.AddWithValue("$isWaitingForLanguageMessage", isWaitingForLanguageMessage);
 
-        await command.ExecuteNonQueryAsync(); // Execute SQL-request without any feedback
+        await command.ExecuteNonQueryAsync();
     }
 
-    public async Task<bool> GetIsWaitingForLanguageMessage(string chatID) // Set value to check if Telegram bot is waitng for user's message to set time between messages
+    /// <summary>
+    /// Determines whether the user associated with the specified chat ID is currently waiting for a language message.
+    /// </summary>
+    public async Task<bool> GetIsWaitingForLanguageMessage(string chatID) 
     {
-        string databasePath = await GetDatabasePath(); // Get path to the database
+        string databasePath = await GetDatabasePath(); 
 
-        bool isWaitingForLanguageMessage = false; // Craete variable for value to check if Telegram bot is waitng for user's message to select language
+        bool isWaitingForLanguageMessage = false; 
 
-        using var connection = new SqliteConnection($"Data Source={databasePath}"); // Connect to the database
-        await connection.OpenAsync(); // Open connection
+        using var connection = new SqliteConnection($"Data Source={databasePath}"); 
+        await connection.OpenAsync();
 
-        var command = connection.CreateCommand(); // Create command
+        var command = connection.CreateCommand();
         command.CommandText = @"SELECT IsWaitingForLanguageMessage From USERS
                               WHERE ChatID = $chatID
-                              "; // SQL-request to get if Telegram bot is waitng for user's message to select language
+                              "; 
 
-        command.Parameters.AddWithValue("$chatID", chatID); // Bind the value of the category to the parameter of the SQL-request
+        command.Parameters.AddWithValue("$chatID", chatID);
 
-        using var reader = await command.ExecuteReaderAsync(); // Create SQL-request to the database to get data
+        using var reader = await command.ExecuteReaderAsync(); 
         if (await reader.ReadAsync())
         {
-            if (!reader.IsDBNull(0)) // Check if the value is null
+            if (!reader.IsDBNull(0)) 
             {
-                isWaitingForLanguageMessage = reader.GetBoolean(0); // Take value from captured string
+                isWaitingForLanguageMessage = reader.GetBoolean(0);
             }
         }
 
-        return isWaitingForLanguageMessage; // Return received value
+        return isWaitingForLanguageMessage;
     }
 
-    public async Task SetIsWaitingForMinutesMessage(string chatID, bool isWaitingForMinutesMessage) // Set value to check if Telegram bot is waitng for user's message to set time between messages
+    /// <summary>
+    /// Updates the waiting status for minutes messages for the user associated with the specified chat ID.
+    /// </summary>
+    public async Task SetIsWaitingForMinutesMessage(string chatID, bool isWaitingForMinutesMessage)
     {
-        string databasePath = await GetDatabasePath(); // Get path to the database
+        string databasePath = await GetDatabasePath(); 
 
-        using var connection = new SqliteConnection($"Data Source={databasePath}"); // Connect to the database
-        await connection.OpenAsync(); // Open connection
+        using var connection = new SqliteConnection($"Data Source={databasePath}"); 
+        await connection.OpenAsync(); 
 
-        var command = connection.CreateCommand(); // Create command
+        var command = connection.CreateCommand(); 
         command.CommandText = @"
             UPDATE Users
             SET IsWaitingForMinutesMessage = $isWaitingForMinutesMessage
             WHERE ChatID = $chatID;
-            "; // SQL-request to get if Telegram bot is waitng for user's message to select language 
+            "; 
 
-        command.Parameters.AddWithValue("$chatID", chatID); // Bind the value of the category to the parameter of the SQL-request
-        command.Parameters.AddWithValue("$isWaitingForMinutesMessage", isWaitingForMinutesMessage); // Bind the value of the category to the parameter of the SQL-request
+        command.Parameters.AddWithValue("$chatID", chatID);
+        command.Parameters.AddWithValue("$isWaitingForMinutesMessage", isWaitingForMinutesMessage); 
 
-        await command.ExecuteNonQueryAsync(); // Execute SQL-request without any feedback
+        await command.ExecuteNonQueryAsync();
     }
 
-
-    public async Task<bool> GetIsWaitingForMinutesMessage(string chatID) // Set value to check if Telegram bot is waitng for user's message to set time between messages
+    /// <summary>
+    /// Asynchronously determines whether the user associated with the specified chat ID is currently waiting for a minutes message.
+    /// </summary>
+    public async Task<bool> GetIsWaitingForMinutesMessage(string chatID) 
     {
-        string databasePath = await GetDatabasePath(); // Get path to the database
+        string databasePath = await GetDatabasePath();
 
-        bool isWaitingForMinutesMessage = false; // Craete variable for value to check if Telegram bot is waitng for user's message to select language
+        bool isWaitingForMinutesMessage = false;
 
-        using var connection = new SqliteConnection($"Data Source={databasePath}"); // Connect to the database
-        await connection.OpenAsync(); // Open connection
+        using var connection = new SqliteConnection($"Data Source={databasePath}");
+        await connection.OpenAsync();
 
-        var command = connection.CreateCommand(); // Create command
+        var command = connection.CreateCommand();
         command.CommandText = @"SELECT IsWaitingForMinutesMessage From USERS
                               WHERE ChatID = $chatID
-                              "; // SQL-request to get if Telegram bot is waitng for user's message to select language
+                              "; 
 
-        command.Parameters.AddWithValue("$chatID", chatID); // Bind the value of the category to the parameter of the SQL-request
+        command.Parameters.AddWithValue("$chatID", chatID); 
 
-        using var reader = await command.ExecuteReaderAsync(); // Create SQL-request to the database to get data
+        using var reader = await command.ExecuteReaderAsync(); 
         if (await reader.ReadAsync())
         {
-            if (!reader.IsDBNull(0)) // Check if the value is null
+            if (!reader.IsDBNull(0))
             {
-                isWaitingForMinutesMessage = reader.GetBoolean(0); // Take value from captured string
+                isWaitingForMinutesMessage = reader.GetBoolean(0); 
             }
         }
 
-        return isWaitingForMinutesMessage; // Return received value
+        return isWaitingForMinutesMessage;
     }
 
-    public async Task SetTimeBetweenMessageAndTargetTime(string chatID, int minutes, string targetTime) // Set value to set time between sending messages and target time to send message
+    /// <summary>
+    /// Updates the time interval and target time settings for a user in the database based on the specified chat identifier.
+    /// </summary>
+    public async Task SetTimeBetweenMessageAndTargetTime(string chatID, int minutes, string targetTime) 
     {
-        string databasePath = await GetDatabasePath(); // Get path to the database
+        string databasePath = await GetDatabasePath();
 
-        using var connection = new SqliteConnection($"Data Source={databasePath}"); // Connect to the database
-        await connection.OpenAsync(); // Open connection
+        using var connection = new SqliteConnection($"Data Source={databasePath}"); 
+        await connection.OpenAsync();
 
-        var command = connection.CreateCommand(); // Create command
+        var command = connection.CreateCommand();
         command.CommandText = @"
         UPDATE Users
         SET Minutes = $minutes,
             TargetTime = $targetTime
         WHERE ChatID = $chatID
-        "; // SQL-request to get if Telegram bot is waitng for user's message to select language 
+        "; 
 
-        command.Parameters.AddWithValue("$chatID", chatID); // Bind the value of the category to the parameter of the SQL-request
-        command.Parameters.AddWithValue("$minutes", minutes); // Bind the value of the category to the parameter of the SQL-request
-        command.Parameters.AddWithValue("$targetTime", targetTime); // Bind the value of the category to the parameter of the SQL-request
+        command.Parameters.AddWithValue("$chatID", chatID); 
+        command.Parameters.AddWithValue("$minutes", minutes); 
+        command.Parameters.AddWithValue("$targetTime", targetTime);
 
-        await command.ExecuteNonQueryAsync(); // Execute SQL-request without any feedback
+        await command.ExecuteNonQueryAsync();
     }
 
-    public async Task<int> GetTimeBetweenMessages(string chatID) // Get value to set time between sending messages
+    /// <summary>
+    /// Retrieves the time interval, in minutes, between messages for the specified chat.
+    /// </summary>
+    public async Task<int> GetTimeBetweenMessages(string chatID)
     {
-        string databasePath = await GetDatabasePath(); // Get path to the database
+        string databasePath = await GetDatabasePath(); 
 
-        int minutes = 30; // Set based value of varibable
+        int minutes = 30; 
 
-        using var connection = new SqliteConnection($"Data Source={databasePath}"); // Connect to the database
-        await connection.OpenAsync(); // Open connection
+        using var connection = new SqliteConnection($"Data Source={databasePath}"); 
+        await connection.OpenAsync(); 
 
-        var command = connection.CreateCommand(); // Create command
+        var command = connection.CreateCommand();
         command.CommandText = @"SELECT Minutes FROM Users
-            WHERE ChatID = $chatID"; // SQL-request to get if Telegram bot is waitng for user's message to select language
+            WHERE ChatID = $chatID"; 
 
-        command.Parameters.AddWithValue("$chatID", chatID); // Bind the value of the category to the parameter of the SQL-request
+        command.Parameters.AddWithValue("$chatID", chatID); 
 
-        using var reader = await command.ExecuteReaderAsync(); // Create SQL-request to the database to get data
+        using var reader = await command.ExecuteReaderAsync(); 
         if (await reader.ReadAsync())
         {
-            minutes = reader.GetInt32(0); // Take value from captured string
+            minutes = reader.GetInt32(0);
         }
 
-        return minutes; // Return received value
+        return minutes;
     }
 
-    public async Task SetTargetTime(string chatID, string targetTime) // Set target time to send message
+    /// <summary>
+    /// Updates the target time for the user associated with the specified chat ID in the database.
+    /// </summary>
+    public async Task SetTargetTime(string chatID, string targetTime) 
     {
-        string databasePath = await GetDatabasePath(); // Get path to the database
+        string databasePath = await GetDatabasePath(); 
 
-        using var connection = new SqliteConnection($"Data Source={databasePath}"); // Connect to the database
-        await connection.OpenAsync(); // Open connection
+        using var connection = new SqliteConnection($"Data Source={databasePath}"); 
+        await connection.OpenAsync();
 
-        var command = connection.CreateCommand(); // Create command
+        var command = connection.CreateCommand(); 
         command.CommandText = @"UPDATE users
             SET TargetTime = $targetTime
-            WHERE ChatID = $chatID";  // SQL-request to get if Telegram bot is waitng for user's message to select language 
+            WHERE ChatID = $chatID";  
 
-        command.Parameters.AddWithValue("$chatID", chatID); // Bind the value of the category to the parameter of the SQL-request
-        command.Parameters.AddWithValue("$targetTime", targetTime); // Bind the value of the category to the parameter of the SQL-request
+        command.Parameters.AddWithValue("$chatID", chatID); 
+        command.Parameters.AddWithValue("$targetTime", targetTime); 
 
-        await command.ExecuteNonQueryAsync(); // Execute SQL-request without any feedback
+        await command.ExecuteNonQueryAsync(); 
     }
 
-    public async Task<string> GetTargetTime(string chatID) // Get target time to send message
+    /// <summary>
+    /// Retrieves the target time associated with the specified chat identifier from the database.
+    /// </summary>
+    public async Task<string> GetTargetTime(string chatID) 
     {
-        string targetTime = ""; // Create variable for target time
+        string targetTime = ""; 
 
-        string databasePath = await GetDatabasePath(); // Get path to the database
+        string databasePath = await GetDatabasePath(); 
 
-        using var connection = new SqliteConnection($"Data Source={databasePath}"); // Connect to the database
-        await connection.OpenAsync(); // Open connection
+        using var connection = new SqliteConnection($"Data Source={databasePath}"); 
+        await connection.OpenAsync(); 
 
-        var command = connection.CreateCommand(); // Create command
+        var command = connection.CreateCommand(); 
         command.CommandText = @"SELECT TargetTime FROM Users
-            WHERE ChatID = $chatID"; // SQL-request to get if Telegram bot is waitng for user's message to select language
+            WHERE ChatID = $chatID"; 
 
-        command.Parameters.AddWithValue("$chatID", chatID); // Bind the value of the category to the parameter of the SQL-request
+        command.Parameters.AddWithValue("$chatID", chatID); 
 
-        using var reader = await command.ExecuteReaderAsync(); // Create SQL-request to the database to get data
+        using var reader = await command.ExecuteReaderAsync(); 
         if (await reader.ReadAsync())
         {
-            targetTime = reader.GetString(0); // Take value from captured string
+            targetTime = reader.GetString(0); 
                                         
         }
 
-        return targetTime; // Return time to send next message
+        return targetTime;
     }
 }

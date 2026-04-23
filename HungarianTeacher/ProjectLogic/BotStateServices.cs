@@ -3,41 +3,53 @@ using Serilog;
 
 namespace HungarianTeacher.ProjectLogic
 {
-    public class BotStateServices // This class is responsiable for working with logic of bot state (waiting for language message, waiting for minutes message)
+    public class BotStateServices // This class is responsiable for working with logic of bot state (waiting for language message, waiting for minutes message).
     {
-        private readonly IDatabase _database; // Database instance
+        private readonly IDatabase _database;
 
-        public BotStateServices(IDatabase database) // Constructor of this class, which takes the database instance as a parameter
+        public BotStateServices(IDatabase database) 
         {
-                _database = database; // Assign the database instance to the private field
+                _database = database; 
         }
 
-        public async Task<bool> SetIsWaitingForLanguageMessageLogic(long chatID, bool newFlag) // Set flag of waiting for language message in the database
+        /// <summary>
+        /// Sets the waiting status for language message processing for the specified chat.
+        /// </summary>
+        public async Task<bool> SetIsWaitingForLanguageMessageLogic(long chatID, bool newFlag) 
         {
-            await _database.SetIsWaitingForLanguageMessage(chatID.ToString(), newFlag); // Set flag of waiting for language message in the database
+            await _database.SetIsWaitingForLanguageMessage(chatID.ToString(), newFlag);
 
-            return true; // Return true if setting flag of waiting for language message was successful
+            return true; 
         }
 
-        public async Task<bool> GetIsWaitingForLanguageMessageLogic(long chatID) // Get flag of waiting for language message from the database
+        /// <summary>
+        /// ADetermines whether the specified chat is currently awaiting a language message.
+        /// </summary>
+        public async Task<bool> GetIsWaitingForLanguageMessageLogic(long chatID)
         {
             bool currentFlag = await _database.GetIsWaitingForLanguageMessage(chatID.ToString());
 
-            return currentFlag; // Return current flag of waiting for language message
+            return currentFlag;
         }
 
-        public async Task<bool> SetIsWaitingForMinutesMessageLogic(long chatID, bool newFlag) // Set flag of waiting for minutes message in the database
+        /// <summary>
+        /// Sets the waiting state for minutes message logic for the specified chat.
+        /// </summary>
+        public async Task<bool> SetIsWaitingForMinutesMessageLogic(long chatID, bool newFlag) 
         {
-            await _database.SetIsWaitingForMinutesMessage(chatID.ToString(), newFlag); // Set flag of waiting for minutes message in the database
+            await _database.SetIsWaitingForMinutesMessage(chatID.ToString(), newFlag); 
 
-            return true; // Return true if setting flag of waiting for minutes message was successful
+            return true; 
         }
 
-        public async Task<bool> GetIsWaitingForMinutesMessageLogic(long chatID) // Get flag of waiting for minutes message from the database
+        /// <summary>
+        /// Determines whether the specified chat is currently awaiting a minutes message.
+        /// </summary>
+        public async Task<bool> GetIsWaitingForMinutesMessageLogic(long chatID) 
         {
-            bool currentFlag = await _database.GetIsWaitingForMinutesMessage(chatID.ToString()); // Get flag of waiting for minutes message from the database
+            bool currentFlag = await _database.GetIsWaitingForMinutesMessage(chatID.ToString());
 
-            return currentFlag; // Return current flag of waiting for minutes message
+            return currentFlag;
         }
     }
 }

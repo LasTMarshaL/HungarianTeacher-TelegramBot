@@ -4,42 +4,47 @@ using Telegram.Bot;
 using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
 
-public class TelegramBotHost // This class is responsiable for host
+public class TelegramBotHost // This class is responsiable for Telegram bot host.
 {
-    public Action<ITelegramBotClient, Update>? OnMessage;// Define method OnMessage // Action allows use methodd as parametres // ITelegramBotClient - bot client to send messages
-    public TelegramBotClient telegramBotClient; // Bot client
+    public Action<ITelegramBotClient, Update>? OnMessage;
+    public TelegramBotClient telegramBotClient;
 
-    public TelegramBotHost(string _token) // Create instance with token
+    public TelegramBotHost(string _token) 
     {
-        telegramBotClient = new TelegramBotClient(_token); // Create bot client using token
+        telegramBotClient = new TelegramBotClient(_token); 
     }
 
-    public void Start() // Start bot
+    /// <summary>
+    /// Initializes and starts the bot, configuring it to receive updates from Telegram.
+    /// </summary>
+    public void Start() 
     {
         var receiverOptions = new ReceiverOptions 
         {
-            AllowedUpdates = { } // Get all updates (messages, commands, etc.)
+            AllowedUpdates = { }
         };
-        telegramBotClient.StartReceiving(UpdateHandler, ErrorHandler, receiverOptions); // Start geting messages 
+        telegramBotClient.StartReceiving(UpdateHandler, ErrorHandler, receiverOptions); 
 
-        LoggerConfigurator.Setup(); // Configure Serilog logger
+        LoggerConfigurator.Setup();
 
-        Log.Information("Bot was lanched"); // Log information about the lanching bot
+        Log.Information("Bot was lanched");
     }
 
-    // Async method can be implemented wiht other method  at the same time
-    // Task means, that program can start this method and do other actions during working of the method
+    /// <summary>
+    /// Handles exceptions that occur during bot operations by logging the error information asynchronously.
+    /// </summary>
     private async System.Threading.Tasks.Task ErrorHandler(ITelegramBotClient client, Exception exception, HandleErrorSource source, CancellationToken token)
     {
-        Log.Error($"Exceprion: {exception.Message}"); // Print exception
-        await System.Threading.Tasks.Task.CompletedTask; // Finish async method
+        Log.Error($"Exceprion: {exception.Message}"); 
+        await System.Threading.Tasks.Task.CompletedTask;
     }
 
-    // Async method can be implemented wiht other method  at the same time
-    // Task means, that program can start this method and do other actions during working of the method
-    private async System.Threading.Tasks.Task UpdateHandler(ITelegramBotClient client, Update update, CancellationToken token) // Is used after each update
+    /// <summary>
+    /// Handles an incoming update from the Telegram bot client and triggers the associated message event handler.
+    /// </summary>
+    private async System.Threading.Tasks.Task UpdateHandler(ITelegramBotClient client, Update update, CancellationToken token)
     {
-        OnMessage?.Invoke(client, update); // Get message and start working with it
-        await System.Threading.Tasks.Task.CompletedTask; // Finish async method
+        OnMessage?.Invoke(client, update); 
+        await System.Threading.Tasks.Task.CompletedTask; 
     }
 }

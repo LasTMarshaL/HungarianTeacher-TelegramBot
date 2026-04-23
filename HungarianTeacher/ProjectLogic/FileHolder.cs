@@ -1,29 +1,20 @@
-﻿class FileHolder // This class is responsiable for files
+﻿class FileHolder // This class is responsiable for files control.
 {
-    Random random = new Random(); // Random
+    private Random _random = new Random(); 
 
-    private string _filePath = Path.Combine(AppContext.BaseDirectory, "Assets"); // Get path to the folder with pictures
-    public string filePath 
+    public string FilePath { get; private set; } = Path.Combine(AppContext.BaseDirectory, "Assets"); 
+
+    /// <summary>
+    /// Selects and returns the path of a random file from the directory specified by the FilePath property.
+    /// </summary>
+    public string GetPictureFile() 
     {
-        get
-        {
-            return _filePath;
-        }
-        set
-        {
-            _filePath = value;
-        }
+        string[] files = Directory.GetFiles(FilePath, "*.*", SearchOption.TopDirectoryOnly); 
 
-    }
+        int randomIndex = _random.Next(0, files.Length); 
 
-    public string GetPictureFile() // Method to get random pictore from folder
-    {
-        string[] files = Directory.GetFiles(filePath, "*.*", SearchOption.TopDirectoryOnly); // Make list of  all files ("*.*" - all files)
+        string randomPicture = files[randomIndex]; 
 
-        int randomIndex = random.Next(0, files.Length); // Rendom index
-
-        string randomPicture = files[randomIndex]; // Get picture using random index
-
-        return randomPicture; // return file path of this picture
+        return randomPicture; 
     }
 }

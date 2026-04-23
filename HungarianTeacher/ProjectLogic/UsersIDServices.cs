@@ -2,37 +2,43 @@
 
 namespace HungarianTeacher.ProjectLogic
 {
-    public class UsersIDServices // This class is responsiable for working with logic of users' Telegram chat IDs
+    public class UsersIDServices // This class is responsiable for working with logic of users' Telegram chat IDs.
     {
         private readonly IDatabase _database; // Database instance
 
-        public UsersIDServices(IDatabase database) // Constructor of this class, which takes the database instance as a parameter
+        public UsersIDServices(IDatabase database) 
         {
-            _database = database; // Assign the database instance to the private field
+            _database = database; 
         }
 
-        public async Task<bool> AddNewChatIDLogic(long chatID) // Add new chat ID to the database
+        /// <summary>
+        /// Adds a new chat identifier to the database.
+        /// </summary>
+        public async Task<bool> AddNewChatIDLogic(long chatID) 
         {
-            await _database.AddNewChatID(chatID.ToString()); // Add new chat ID to the database
+            await _database.AddNewChatID(chatID.ToString()); 
 
-            return true; // Return true if adding new chat ID was successful
+            return true; 
         }
 
-        public async Task<List<long>> GetAllChatIDsLogic() // Get all chat IDs from the database
+        /// <summary>
+        /// Retrieves all chat IDs from the database and returns them as a list of long integers.
+        /// </summary>
+        public async Task<List<long>> GetAllChatIDsLogic()
         {
-            List<long> allChatIds = new List<long>(); // Create list for all chat users' Telegram IDs
+            List<long> allChatIds = new List<long>();
 
-            List<string> allChatIdsString = await _database.GetAllChatIDs(); // Get all chat IDs from the database as strings
+            List<string> allChatIdsString = await _database.GetAllChatIDs(); 
 
-            foreach (string chatIdString in allChatIdsString) // Take users' Telegram chat ID one by one
+            foreach (string chatIdString in allChatIdsString) 
             {
-                if (long.TryParse(chatIdString, out long chatId)) // If user's Telegram chat ID can be converted to long
+                if (long.TryParse(chatIdString, out long chatId)) 
                 {
-                    allChatIds.Add(chatId); // Add user's Telegram chat ID to the list
+                    allChatIds.Add(chatId); 
                 }
             }
 
-            return allChatIds; // Return list with all users' Telegram chat IDs
+            return allChatIds;
         }
     }
 }
