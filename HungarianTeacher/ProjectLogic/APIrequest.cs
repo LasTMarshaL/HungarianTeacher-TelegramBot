@@ -2,7 +2,7 @@
 using Serilog;
 
 
-class APIrequest // This class is responsiable for working with API.
+class APIrequest 
 {
     private string _apiKey = "Your key";
     public string apiKey
@@ -27,9 +27,6 @@ class APIrequest // This class is responsiable for working with API.
         }
     }
 
-    /// <summary>
-    /// Translates the specified text into the target language using the Google Translation API.
-    /// </summary>
     public string SendRequestTranslation(string text, string languageCode) 
     {
         try

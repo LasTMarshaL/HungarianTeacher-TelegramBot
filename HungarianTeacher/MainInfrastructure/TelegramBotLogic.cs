@@ -7,7 +7,7 @@ using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
 
 
-class TelegramBotLogic // This class is responsiable for main Telegram bot processes.
+class TelegramBotLogic 
 {
     private static TelegramBotHost hungarianStudingBot = new TelegramBotHost("Your token");
 
@@ -20,9 +20,6 @@ class TelegramBotLogic // This class is responsiable for main Telegram bot proce
     private static APIrequest _aPIrequest = new APIrequest();
     private static FileHolder _fileHolder = new FileHolder();
 
-    /// <summary>
-    /// Initializes and starts the main application logic, including database setup, service initialization, and bot message handling.
-    /// </summary>
     private static async Task Main() 
     {
         Log.Information("Main logic is lanching"); 
@@ -65,9 +62,7 @@ class TelegramBotLogic // This class is responsiable for main Telegram bot proce
         }
     }
 
-    /// <summary>
-    /// Handles incoming messages and callback queries from the Telegram bot, processing user commands and managing chat states.
-    /// </summary>
+
     private static async void OnMessage(ITelegramBotClient client, Update update) 
     {
         long chatID = 0; 
@@ -157,9 +152,6 @@ class TelegramBotLogic // This class is responsiable for main Telegram bot proce
         }
     }
 
-    /// <summary>
-    /// Periodically checks the configured schedule and sends a photo to the specified Telegram chat at the appropriate time.
-    /// </summary>
     private static async Task CheckTimerLoop(ITelegramBotClient client, long chatID)
     {
         await _botMessageScheduler!.SetTargetTimeLogic(chatID, await _botMessageScheduler.GetTimeBetweenMessagesLogic(chatID)); 

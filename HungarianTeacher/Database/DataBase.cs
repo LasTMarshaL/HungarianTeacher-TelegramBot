@@ -2,7 +2,7 @@
 using Microsoft.Data.Sqlite;
 
 
-public class Database: IDatabase // This class is responsiable for working with database.
+public class Database: IDatabase 
 {
     public async Task<string> GetDatabasePath() 
     { 
@@ -15,9 +15,6 @@ public class Database: IDatabase // This class is responsiable for working with 
         return databasePath;
     }
 
-    /// <summary>
-    /// Creates the Users table in the SQLite database if it does not already exist.
-    /// </summary>
     public async Task CreateDatabaseTable() 
     {
         string databasePath = await GetDatabasePath(); 
@@ -40,9 +37,6 @@ public class Database: IDatabase // This class is responsiable for working with 
         await command.ExecuteNonQueryAsync();
     }
 
-    /// <summary>
-    /// Inserts a new chat identifier into the Users table if it does not already exist.
-    /// </summary>
     public async Task AddNewChatID(string chatID) 
     {
         string databasePath = await GetDatabasePath();
@@ -61,9 +55,6 @@ public class Database: IDatabase // This class is responsiable for working with 
         await command.ExecuteNonQueryAsync(); 
     }
 
-    /// <summary>
-    /// Asynchronously retrieves all chat ID values from the Users table in the database.
-    /// </summary>
     public async Task<List<string>> GetAllChatIDs() 
     {
         string databasePath = await GetDatabasePath();
@@ -86,10 +77,6 @@ public class Database: IDatabase // This class is responsiable for working with 
 
         return chatIDs;
     }
-
-    /// <summary>
-    /// Asynchronously updates the user's waiting status for a language message in the database for the specified chat ID.
-    /// </summary>
     public async Task SetIsWaitingForLanguageMessage(string chatID, bool isWaitingForLanguageMessage) 
     {
         string databasePath = await GetDatabasePath();
@@ -110,9 +97,6 @@ public class Database: IDatabase // This class is responsiable for working with 
         await command.ExecuteNonQueryAsync();
     }
 
-    /// <summary>
-    /// Determines whether the user associated with the specified chat ID is currently waiting for a language message.
-    /// </summary>
     public async Task<bool> GetIsWaitingForLanguageMessage(string chatID) 
     {
         string databasePath = await GetDatabasePath(); 
@@ -141,9 +125,6 @@ public class Database: IDatabase // This class is responsiable for working with 
         return isWaitingForLanguageMessage;
     }
 
-    /// <summary>
-    /// Updates the waiting status for minutes messages for the user associated with the specified chat ID.
-    /// </summary>
     public async Task SetIsWaitingForMinutesMessage(string chatID, bool isWaitingForMinutesMessage)
     {
         string databasePath = await GetDatabasePath(); 
@@ -164,9 +145,6 @@ public class Database: IDatabase // This class is responsiable for working with 
         await command.ExecuteNonQueryAsync();
     }
 
-    /// <summary>
-    /// Asynchronously determines whether the user associated with the specified chat ID is currently waiting for a minutes message.
-    /// </summary>
     public async Task<bool> GetIsWaitingForMinutesMessage(string chatID) 
     {
         string databasePath = await GetDatabasePath();
@@ -195,9 +173,6 @@ public class Database: IDatabase // This class is responsiable for working with 
         return isWaitingForMinutesMessage;
     }
 
-    /// <summary>
-    /// Updates the time interval and target time settings for a user in the database based on the specified chat identifier.
-    /// </summary>
     public async Task SetTimeBetweenMessageAndTargetTime(string chatID, int minutes, string targetTime) 
     {
         string databasePath = await GetDatabasePath();
@@ -220,9 +195,7 @@ public class Database: IDatabase // This class is responsiable for working with 
         await command.ExecuteNonQueryAsync();
     }
 
-    /// <summary>
-    /// Retrieves the time interval, in minutes, between messages for the specified chat.
-    /// </summary>
+
     public async Task<int> GetTimeBetweenMessages(string chatID)
     {
         string databasePath = await GetDatabasePath(); 
@@ -247,9 +220,7 @@ public class Database: IDatabase // This class is responsiable for working with 
         return minutes;
     }
 
-    /// <summary>
-    /// Updates the target time for the user associated with the specified chat ID in the database.
-    /// </summary>
+
     public async Task SetTargetTime(string chatID, string targetTime) 
     {
         string databasePath = await GetDatabasePath(); 
@@ -268,9 +239,7 @@ public class Database: IDatabase // This class is responsiable for working with 
         await command.ExecuteNonQueryAsync(); 
     }
 
-    /// <summary>
-    /// Retrieves the target time associated with the specified chat identifier from the database.
-    /// </summary>
+
     public async Task<string> GetTargetTime(string chatID) 
     {
         string targetTime = ""; 

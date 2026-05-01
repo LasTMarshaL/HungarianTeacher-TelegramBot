@@ -5,7 +5,7 @@ namespace HungarianTeacher.ProjectLogic
 
 
 {
-    public class BotMessageScheduler // This class is responsiable for working with logic of time between messages and target time.
+    public class BotMessageScheduler 
     {
         private readonly IDatabase _database;
 
@@ -14,9 +14,6 @@ namespace HungarianTeacher.ProjectLogic
             _database = database;
         }
 
-        /// <summary>
-        /// Sets the interval, in minutes, between messages for a specified chat if the provided value is a valid, non-zero integer.
-        /// </summary>
         public async Task<bool> SetTimeBetweenMessageAndTargetTimeLogic(long chatID, string minutesUsersMessage) 
         {
             if (int.TryParse(minutesUsersMessage, out int minutes)) 
@@ -41,9 +38,6 @@ namespace HungarianTeacher.ProjectLogic
             }
         }
 
-        /// <summary>
-        /// Retrieves the time interval, in seconds, between messages for the specified chat.
-        /// </summary>
         public async Task<int> GetTimeBetweenMessagesLogic(long chatID) 
         {
             try
@@ -61,9 +55,6 @@ namespace HungarianTeacher.ProjectLogic
             }
         }
 
-        /// <summary>
-        /// Sets the target time for a chat based on the specified duration in minutes.
-        /// </summary>
         public async Task<bool> SetTargetTimeLogic(long chatID, int minutes)
         {
             if (minutes > 0)
@@ -82,9 +73,6 @@ namespace HungarianTeacher.ProjectLogic
             }
         }
 
-        /// <summary>
-        /// Retrieves the scheduled target time for the specified chat. If the stored target time is invalid or in the past, calculates a new target time based on the current UTC time and a predefined delay.
-        /// </summary>
         public async Task<DateTime> GetTargetTimeLogic(long chatID) 
         {
             string targetTimeString = await _database.GetTargetTime(chatID.ToString()); 

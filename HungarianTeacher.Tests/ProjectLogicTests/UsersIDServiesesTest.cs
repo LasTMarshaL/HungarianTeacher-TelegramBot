@@ -12,13 +12,10 @@ namespace HungarianTeacher.Tests.ProjectLogicTests
         [InlineData(123456789, true)]
         public async Task AddNewChatIDLogic_ReturnExpectedOutput(long chatID, bool expected)
         {
-            // Arrange - variables, classes, etc.
             var mockDatabase = new Mock<IDatabase>();
 
-            // Act - call the method which is tested
             var result = await new UsersIDServices(mockDatabase.Object).AddNewChatIDLogic(chatID);
 
-            // Assert - check if the result is what was expected
             result.Should().Be(expected);
             mockDatabase.Verify(database => database.AddNewChatID(chatID.ToString()), Times.Once);
         }
@@ -32,15 +29,12 @@ namespace HungarianTeacher.Tests.ProjectLogicTests
         [MemberData(nameof(GetAllChatIDsLogicTestData))] 
         public async Task GetAllChatIDsLogic_ReturnExpectedOutput(List<string> expectedChatIDsString, List<long> expectedChatIDs)
         {
-            // Arrange - variables, classes, etc.
             var mockDatabase = new Mock<IDatabase>();
 
             mockDatabase.Setup(database => database.GetAllChatIDs()).ReturnsAsync(expectedChatIDsString); 
             
-            // Act - call the method which is tested
             var result = await new UsersIDServices(mockDatabase.Object).GetAllChatIDsLogic(); 
             
-            // Assert - check if the result is what was expected
             result.Should().BeEquivalentTo(expectedChatIDs); 
             mockDatabase.Verify(database => database.GetAllChatIDs(), Times.Once); 
         }

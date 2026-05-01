@@ -1,7 +1,7 @@
 ﻿
 namespace HungarianTeacher.Database
 {
-    public interface IDatabase // Interface for working with the databases and tests.
+    public interface IDatabase 
     {
         Task AddNewChatID(string chatID);
         Task<List<string>> GetAllChatIDs();

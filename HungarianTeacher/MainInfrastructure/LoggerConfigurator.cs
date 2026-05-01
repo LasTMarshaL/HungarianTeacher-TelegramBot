@@ -1,11 +1,8 @@
 ﻿using Serilog;
 namespace HungarianTeacher.MainInfrastructure
 {
-    public static class LoggerConfigurator // This class is responisble for centralized configuration of the logging system.
+    public static class LoggerConfigurator 
     {
-        /// <summary>
-        /// Configures the application's logging system to use a debug-level logger that writes output to both the console and a daily rolling log file.
-        /// </summary>
         public static void Setup() 
         {
             Log.Logger = new LoggerConfiguration() 
