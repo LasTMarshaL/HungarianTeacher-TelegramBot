@@ -1,25 +1,34 @@
-# HungarianTeacher-MobileApp
-## ExpenseCounter is a mobile application for countingpersonal expenses built with .NET MAUI.
+## HungarianTeacher-TelegramBot
+HungarianTeacher is a Telegram bot for revicing the Hungarian language materials built with .NET. 🇭🇺
 
-## Features:
-* **Seting time between sending studing messages**
-* **Translate to english / russian / hungarian**
+## 📌About
+This repository contains a Telegram bot for constant review of previously covered material and incomprehensible words translation. It demonstrates high-level development skills, object-oriented programming (OOP) principles, unit tests (using empty database templates), logging and integrated SQL database requests. This project serves as a solid demonstration of messangers orientated software development and logic tests tools. Sending messages, setting interval between them and Google API integration (translator) are realized.
 
-## Technologies:
-* **CSharp** 
-* **Telegram.Bot**
-* **Serilog**
-* **xUnit**
-* **Moq**
-* **FluentAssertions**
-* **Google.Cloud.Translation.V2**
-* **SQLite3 -SQL**
+## 🗂️ Repository Structure
+* **`HungarianTeacher/`** — Programmable logic and logging.
+* **`HungarianTeacher.Test/`** —  Programmable logic tests.
 
-## Tests
-The project implements **Isolated Unit Testing** to ensure business logic reliability without external dependencies.
+## 💻 Short Software Overview
+* **Logic and soft section:** Code written in the C# programming language using the Visual Studio environment and some frameworks for different sphere (tests, Telegram, API, logging).
+* **Database:** SQLite3 is used with SQL query language for local data storage.
 
-## Comments:
-There are a lot of comments, which describes in detail each step to allow even beginer understant the project logic.
+## ⚠️ Safety Notice
+The materials in this repository are intended for educational and research purposes. The device operates using high voltages and high pulse currents; strict electrical safety rules must be observed when proceeding to physical assembly ("building the hardware"). ⚠️!The author bears no responsibility for the reader's actions!⚠️
 
-## License:
-No license, but if you use my project or its significan parts in public sphere or your progects, please, point me as an author.
+## 🚀 Planned (possible) updates
+* Opportunity to add new content via sending a picture.
+
+## 🧪 Used Technologies & Software
+* Visual Studio (Development environment)
+* .NET MAUI (Framework)
+* C# (Programmable logic)
+* Telegram.Bot (Telegram based development)
+* xUnit (Pgrommable logic tests)
+* FluentAssertions (Tests results checking)
+* Google.Cloud.Translation.V2 (Google API)
+* Moq (database empty templates)
+* Serilog (Logging)
+* SQL / SQLite3 (Database / requests)
+
+## 🖼️ Screenshots
+<img width="1162" height="1101" alt="image" src="https://github.com/user-attachments/assets/a61f0baf-59ea-4e7f-b243-0ec35ed6457f" />
