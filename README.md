@@ -5,8 +5,8 @@ HungarianTeacher is a Telegram bot for revicing the Hungarian language materials
 This repository contains a Telegram bot for constant review of previously covered material and incomprehensible words translation. It demonstrates high-level development skills, object-oriented programming (OOP) principles, unit tests (using empty database templates), logging and integrated SQL database requests. This project serves as a solid demonstration of messangers orientated software development and logic tests tools. Sending messages, setting interval between them and Google API integration (translator) are realized.
 
 ## 🗂️ Repository Structure
-* **`HungarianTeacher/`** — Programmable logic and logging.
-* **`HungarianTeacher.Test/`** —  Programmable logic tests.
+* **`HungarianTeacher/`** - Programmable logic and logging.
+* **`HungarianTeacher.Test/`** -  Programmable logic tests.
 
 ## 💻 Short Software Overview
 * **Logic and soft section:** Code written in the C# programming language using the Visual Studio environment and some frameworks for different sphere (tests, Telegram, API, logging).
