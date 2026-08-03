@@ -9,7 +9,7 @@ using Telegram.Bot.Types.ReplyMarkups;
 
 class TelegramBotLogic 
 {
-    private static TelegramBotHost hungarianStudingBot = new TelegramBotHost("Your token");
+    private static TelegramBotHost hungarianStudingBot = new TelegramBotHost("8312704065:AAGWs8Yz4Sz8o3VR1AqwC7hlkU4MtOuh2NI");
 
     
     private static  List<long> allChatIDs = new List<long>();
