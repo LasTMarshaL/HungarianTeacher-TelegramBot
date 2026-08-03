@@ -13,7 +13,7 @@ This repository contains a Telegram bot for constant review of previously covere
 * **Database:** SQLite3 is used with SQL query language for local data storage.
 
 ## ⚠️ Safety Notice
-The materials in this repository are intended for educational and research purposes. The device operates using high voltages and high pulse currents; strict electrical safety rules must be observed when proceeding to physical assembly ("building the hardware"). ⚠️!The author bears no responsibility for the reader's actions!⚠️
+*⚠️!The author bears no responsibility for the reader's actions!⚠️
 
 ## 🚀 Planned (possible) updates
 * Opportunity to add new content via sending a picture.
