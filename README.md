@@ -14,6 +14,7 @@ This repository contains a Telegram bot for constant review of previously covere
 
 ## ⚠️ Safety Notice
 *⚠️!The author bears no responsibility for the reader's actions!⚠️
+* Used tocken is not active and used as example.
 
 ## 🚀 Planned (possible) updates
 * Opportunity to add new content via sending a picture.
